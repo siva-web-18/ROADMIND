@@ -6,160 +6,316 @@
 
     <title>ROADMIND - Smart Road Monitoring</title>
 
-    <link rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
 
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #07111f;
             color: white;
-        }
-
-        header {
-            padding: 18px;
-            background: #111827;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 30px;
-        }
-
-        header p {
-            margin: 6px 0 0;
-            color: #94a3b8;
-        }
-
-        .dashboard {
-            display: flex;
-            gap: 15px;
-            padding: 15px;
-        }
-
-        .panel {
-            width: 320px;
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 18px;
-        }
-
-        .status {
-            background: #334155;
-            padding: 14px;
-            margin-top: 12px;
-            border-radius: 8px;
-        }
-
-        .danger {
-            color: #ff4d4d;
-            font-weight: bold;
-        }
-
-        .success {
-            color: #22c55e;
-            font-weight: bold;
-        }
-
-        .warning {
-            color: #f59e0b;
-            font-weight: bold;
-        }
-
-        .location {
-            color: #38bdf8;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        #analyzeButton {
-            background: #2563eb;
-            color: white;
-        }
-
-        #locateButton {
-            background: #475569;
-            color: white;
-        }
-
-        input[type="file"] {
-            width: 100%;
-            margin-top: 10px;
-            padding: 8px;
-            background: #0f172a;
-            color: white;
-            border-radius: 6px;
-        }
-
-        #map {
-            flex: 1;
-            height: 650px;
-            border-radius: 12px;
             overflow: hidden;
         }
 
-        .alert-marker {
-            background: red;
-            border: 3px solid white;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            box-shadow: 0 0 15px red;
+        /* HEADER */
+        .header {
+            height: 70px;
+            background: #0b1728;
+            border-bottom: 1px solid #24364d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            position: relative;
+            z-index: 1000;
         }
 
-        .warning-marker {
-            background: orange;
-            border: 3px solid white;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            box-shadow: 0 0 15px orange;
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            color: #00e5ff;
+            letter-spacing: 2px;
         }
 
-        .clear-marker {
-            background: #22c55e;
-            border: 3px solid white;
+        .subtitle {
+            font-size: 12px;
+            color: #9fb0c5;
+            margin-top: 3px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 11px;
+            height: 11px;
+            background: #00e676;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        /* MAIN */
+        .main {
+            height: calc(100vh - 70px);
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 340px;
+            background: #0b1728;
+            border-right: 1px solid #24364d;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 900;
+        }
+
+        .card {
+            background: #101f33;
+            border: 1px solid #263b54;
+            border-radius: 12px;
+            padding: 17px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 15px;
+            color: #00e5ff;
+            margin-bottom: 13px;
+        }
+
+        .system-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid #203149;
+            font-size: 13px;
+        }
+
+        .system-row:last-child {
+            border-bottom: none;
+        }
+
+        .online {
+            color: #00e676;
+            font-weight: bold;
+        }
+
+        .location-text {
+            color: #b9c7d8;
+            font-size: 12px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* UPLOAD */
+        .upload-box {
+            border: 2px dashed #31516f;
+            border-radius: 10px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #00e5ff;
+            background: #13263d;
+        }
+
+        .upload-box input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 35px;
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            color: #c5d2e0;
+            font-size: 13px;
         }
 
         #preview {
             width: 100%;
-            margin-top: 10px;
+            max-height: 180px;
+            object-fit: contain;
             border-radius: 8px;
+            margin-top: 12px;
             display: none;
+            background: #050c15;
         }
 
+        /* BUTTON */
+        .analyze-btn {
+            width: 100%;
+            border: none;
+            border-radius: 9px;
+            padding: 13px;
+            margin-top: 12px;
+            background: #00a8cc;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .analyze-btn:hover {
+            background: #00c8ef;
+        }
+
+        .analyze-btn:disabled {
+            background: #42566b;
+            cursor: not-allowed;
+        }
+
+        /* RESULT */
+        .result {
+            display: none;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 12px;
+            line-height: 1.7;
+            font-size: 13px;
+        }
+
+        .result.safe {
+            background: rgba(0, 230, 118, 0.12);
+            border: 1px solid #00e676;
+        }
+
+        .result.warning {
+            background: rgba(255, 193, 7, 0.12);
+            border: 1px solid #ffc107;
+        }
+
+        .result.danger {
+            background: rgba(255, 70, 70, 0.12);
+            border: 1px solid #ff4646;
+        }
+
+        .result-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* MAP */
+        #map {
+            flex: 1;
+            height: 100%;
+        }
+
+        /* MAP LEGEND */
+        .legend {
+            position: absolute;
+            right: 20px;
+            bottom: 25px;
+            background: rgba(7, 17, 31, 0.94);
+            border: 1px solid #334960;
+            border-radius: 10px;
+            padding: 13px 15px;
+            z-index: 800;
+            min-width: 180px;
+        }
+
+        .legend h4 {
+            color: #00e5ff;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            margin: 6px 0;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background: #ff3030;
+        }
+
+        .yellow {
+            background: #ffc107;
+        }
+
+        .green {
+            background: #00e676;
+        }
+
+        /* MAP ALERT */
+        .map-alert {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(8, 19, 34, 0.94);
+            border: 1px solid #00e5ff;
+            border-radius: 10px;
+            padding: 12px 20px;
+            z-index: 800;
+            display: none;
+            text-align: center;
+            min-width: 280px;
+        }
+
+        .map-alert-title {
+            color: #ff4646;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .map-alert-text {
+            color: #d2dce8;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* MOBILE */
         @media (max-width: 800px) {
-            .dashboard {
-                flex-direction: column;
+            body {
+                overflow: auto;
             }
 
-            .panel {
+            .main {
+                height: auto;
+                display: block;
+            }
+
+            .sidebar {
                 width: 100%;
+                height: auto;
             }
 
             #map {
                 height: 500px;
+            }
+
+            .legend {
+                bottom: 15px;
+                right: 10px;
             }
         }
     </style>
@@ -167,270 +323,375 @@
 
 <body>
 
-<header>
-    <h1>🚧 ROADMIND</h1>
-    <p>AI-Powered Smart Road Monitoring System</p>
-</header>
+<!-- HEADER -->
+<div class="header">
 
-<div class="dashboard">
-
-    <div class="panel">
-
-        <h2>Road Analysis</h2>
-
-        <!-- AI STATUS -->
-        <div class="status">
-            <strong>🤖 AI Status</strong>
-
-            <p>
-                Model:
-                <b>YOLO Pothole Detection</b>
-            </p>
-
-            <p id="aiStatus" class="success">
-                🟢 Online
-            </p>
+    <div>
+        <div class="logo">🚧 ROADMIND</div>
+        <div class="subtitle">
+            AI-Powered Smart Road Monitoring System
         </div>
+    </div>
 
-        <!-- ROAD ALERT -->
-        <div class="status">
-            <strong>🚨 Road Alert</strong>
+    <div class="status">
+        <span class="status-dot"></span>
+        <span id="serverStatus">Checking AI...</span>
+    </div>
 
-            <p id="alertText" class="success">
-                🟢 NO DAMAGE DETECTED
-            </p>
+</div>
 
-            <p id="severity">
-                Severity: —
-            </p>
 
-            <p id="confidence">
-                Confidence: —
-            </p>
-        </div>
+<div class="main">
 
-        <!-- GPS -->
-        <div class="status">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
 
-            <strong>📍 GPS Location</strong>
+        <!-- SYSTEM -->
+        <div class="card">
 
-            <p id="locationStatus" class="location">
-                Detecting location...
-            </p>
+            <h3>🤖 AI SYSTEM</h3>
+
+            <div class="system-row">
+                <span>AI Server</span>
+                <span id="aiServer" class="online">Checking...</span>
+            </div>
+
+            <div class="system-row">
+                <span>YOLO Model</span>
+                <span id="modelStatus" class="online">Checking...</span>
+            </div>
+
+            <div class="system-row">
+                <span>Map</span>
+                <span class="online">SATELLITE</span>
+            </div>
 
         </div>
 
-        <!-- MAP -->
-        <div class="status">
 
-            <strong>🛰️ Map Mode</strong>
+        <!-- LOCATION -->
+        <div class="card">
 
-            <p>Satellite View</p>
+            <h3>📍 CURRENT LOCATION</h3>
+
+            <div class="location-text">
+                <div>
+                    Latitude:
+                    <b id="latitude">Waiting...</b>
+                </div>
+
+                <div>
+                    Longitude:
+                    <b id="longitude">Waiting...</b>
+                </div>
+
+                <div style="margin-top:8px;">
+                    <span id="locationStatus">
+                        Detecting your location...
+                    </span>
+                </div>
+            </div>
 
         </div>
 
-        <!-- IMAGE ANALYSIS -->
-        <div class="status">
 
-            <strong>📸 Road Image</strong>
+        <!-- UPLOAD -->
+        <div class="card">
 
-            <input
-                type="file"
-                id="roadImage"
-                accept="image/*"
-                onchange="previewImage()"
-            >
+            <h3>📸 ROAD ANALYSIS</h3>
 
-            <img id="preview">
+            <label class="upload-box">
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                >
+
+                <div class="upload-icon">📷</div>
+
+                <div class="upload-text">
+                    Click to upload road image
+                </div>
+
+                <img id="preview">
+
+            </label>
 
             <button
-                id="analyzeButton"
+                id="analyzeBtn"
+                class="analyze-btn"
+                disabled
                 onclick="analyzeRoad()"
             >
-                🤖 ANALYZE ROAD WITH AI
+                🔍 ANALYZE ROAD
             </button>
+
+
+            <div
+                id="result"
+                class="result"
+            >
+
+                <div
+                    id="resultTitle"
+                    class="result-title"
+                ></div>
+
+                <div id="resultDetails"></div>
+
+            </div>
 
         </div>
 
-        <button
-            id="locateButton"
-            onclick="locateUser()"
-        >
-            📍 Locate Me
-        </button>
+
+        <!-- DETECTION INFO -->
+        <div class="card">
+
+            <h3>⚠️ DETECTION TYPES</h3>
+
+            <div class="system-row">
+                <span>🕳️ Pothole</span>
+                <span>AI</span>
+            </div>
+
+            <div class="system-row">
+                <span>〰️ Longitudinal Crack</span>
+                <span>AI</span>
+            </div>
+
+            <div class="system-row">
+                <span>↔️ Transverse Crack</span>
+                <span>AI</span>
+            </div>
+
+            <div class="system-row">
+                <span>🕸️ Alligator Crack</span>
+                <span>AI</span>
+            </div>
+
+            <div class="system-row">
+                <span>⚠️ Other</span>
+                <span>AI</span>
+            </div>
+
+        </div>
 
     </div>
 
+
+    <!-- MAP -->
     <div id="map"></div>
 
 </div>
 
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- MAP ALERT -->
+<div
+    id="mapAlert"
+    class="map-alert"
+>
+    <div
+        id="mapAlertTitle"
+        class="map-alert-title"
+    ></div>
+
+    <div
+        id="mapAlertText"
+        class="map-alert-text"
+    ></div>
+</div>
+
+
+<!-- LEGEND -->
+<div class="legend">
+
+    <h4>ROAD CONDITION</h4>
+
+    <div class="legend-row">
+        <span class="legend-dot red"></span>
+        <span>Critical damage</span>
+    </div>
+
+    <div class="legend-row">
+        <span class="legend-dot yellow"></span>
+        <span>Road damage</span>
+    </div>
+
+    <div class="legend-row">
+        <span class="legend-dot green"></span>
+        <span>Safe / monitored</span>
+    </div>
+
+</div>
+
+
+<!-- Leaflet JS -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
 
 <script>
 
-    // =====================================================
-    // ROADMIND MAP
-    // =====================================================
+    // ==========================================
+    // GLOBAL VARIABLES
+    // ==========================================
 
-    const defaultLocation = [11.0168, 76.9558];
-
-    const map = L.map("map").setView(
-        defaultLocation,
-        15
-    );
-
-
-    // SATELLITE MAP
-    const satellite = L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/" +
-        "World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        {
-            attribution: "Tiles © Esri"
-        }
-    );
-
-    satellite.addTo(map);
-
-
-    // LABELS
-    const labels = L.tileLayer(
-        "https://services.arcgisonline.com/ArcGIS/rest/services/" +
-        "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-        {
-            attribution: "Esri"
-        }
-    );
-
-    labels.addTo(map);
-
+    let map;
 
     let userMarker = null;
-    let potholeMarker = null;
+
+    let currentLatitude = 11.0168;
+    let currentLongitude = 76.9558;
+
+    let selectedFile = null;
 
 
-    // =====================================================
-    // MARKER ICONS
-    // =====================================================
+    // ==========================================
+    // INITIALIZE SATELLITE MAP
+    // ==========================================
 
-    const potholeIcon = L.divIcon({
+    function initializeMap() {
 
-        className: "",
-
-        html:
-            '<div class="alert-marker"></div>',
-
-        iconSize: [25, 25],
-
-        iconAnchor: [12, 12]
-
-    });
+        map = L.map("map").setView(
+            [currentLatitude, currentLongitude],
+            15
+        );
 
 
-    const warningIcon = L.divIcon({
-
-        className: "",
-
-        html:
-            '<div class="warning-marker"></div>',
-
-        iconSize: [25, 25],
-
-        iconAnchor: [12, 12]
-
-    });
+        // SATELLITE IMAGERY
+        L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            {
+                maxZoom: 19,
+                attribution:
+                    "Tiles © Esri"
+            }
+        ).addTo(map);
 
 
-    // =====================================================
-    // GPS
-    // =====================================================
+        // LABELS
+        L.tileLayer(
+            "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+            {
+                maxZoom: 19,
+                opacity: 0.9
+            }
+        ).addTo(map);
+
+
+        // DEFAULT MARKER
+        userMarker = L.marker(
+            [currentLatitude, currentLongitude]
+        )
+        .addTo(map)
+        .bindPopup(
+            "<b>📍 ROADMIND Monitoring Area</b><br>" +
+            "Waiting for GPS location..."
+        );
+
+    }
+
+
+    // ==========================================
+    // GET CURRENT LOCATION
+    // ==========================================
 
     function locateUser() {
 
+        const status =
+            document.getElementById("locationStatus");
+
+
         if (!navigator.geolocation) {
 
-            document.getElementById(
-                "locationStatus"
-            ).innerHTML =
-                "❌ GPS not supported";
+            status.innerText =
+                "Geolocation is not supported.";
 
             return;
         }
 
 
-        document.getElementById(
-            "locationStatus"
-        ).innerHTML =
-            "⏳ Finding your location...";
+        status.innerText =
+            "Detecting GPS location...";
 
 
         navigator.geolocation.getCurrentPosition(
 
             function(position) {
 
-                const latitude =
+                currentLatitude =
                     position.coords.latitude;
 
-                const longitude =
+                currentLongitude =
                     position.coords.longitude;
 
 
-                // SAVE GPS
-                window.currentLatitude =
-                    latitude;
-
-                window.currentLongitude =
-                    longitude;
-
-
-                // MOVE MAP
-                map.setView(
-                    [latitude, longitude],
-                    18
-                );
-
-
-                // REMOVE OLD USER MARKER
-                if (userMarker) {
-
-                    map.removeLayer(
-                        userMarker
-                    );
-
-                }
-
-
-                // USER MARKER
-                userMarker = L.marker(
-                    [latitude, longitude]
-                )
-                .addTo(map)
-                .bindPopup(
-                    "<b>📍 YOUR LOCATION</b><br>" +
-                    "ROADMIND monitoring area"
-                );
+                document.getElementById(
+                    "latitude"
+                ).innerText =
+                    currentLatitude.toFixed(6);
 
 
                 document.getElementById(
-                    "locationStatus"
-                ).innerHTML =
-                    "🟢 Location detected<br>" +
-                    "Lat: " +
-                    latitude.toFixed(6) +
-                    "<br>" +
-                    "Lon: " +
-                    longitude.toFixed(6);
+                    "longitude"
+                ).innerText =
+                    currentLongitude.toFixed(6);
+
+
+                status.innerText =
+                    "✅ Current location detected";
+
+
+                map.setView(
+                    [
+                        currentLatitude,
+                        currentLongitude
+                    ],
+                    17
+                );
+
+
+                if (userMarker) {
+
+                    userMarker.setLatLng([
+                        currentLatitude,
+                        currentLongitude
+                    ]);
+
+                    userMarker
+                        .bindPopup(
+                            "<b>📍 Your Current Location</b><br>" +
+                            "Lat: " +
+                            currentLatitude.toFixed(6) +
+                            "<br>Lng: " +
+                            currentLongitude.toFixed(6)
+                        )
+                        .openPopup();
+                }
 
             },
 
-
             function(error) {
 
+                console.log(
+                    "GPS error:",
+                    error
+                );
+
+                status.innerText =
+                    "⚠️ GPS unavailable - using default map location";
+
                 document.getElementById(
-                    "locationStatus"
-                ).innerHTML =
-                    "⚠️ Location permission denied";
+                    "latitude"
+                ).innerText =
+                    currentLatitude.toFixed(6);
+
+                document.getElementById(
+                    "longitude"
+                ).innerText =
+                    currentLongitude.toFixed(6);
 
             },
 
@@ -445,146 +706,44 @@
     }
 
 
-    // =====================================================
-    // IMAGE PREVIEW
-    // =====================================================
+    // ==========================================
+    // CHECK FLASK SERVER
+    // ==========================================
 
-    function previewImage() {
-
-        const file =
-            document.getElementById(
-                "roadImage"
-            ).files[0];
-
-
-        if (!file) return;
-
-
-        const preview =
-            document.getElementById(
-                "preview"
-            );
-
-
-        preview.src =
-            URL.createObjectURL(file);
-
-        preview.style.display =
-            "block";
-
-    }
-
-
-    // =====================================================
-    // AI ROAD ANALYSIS
-    // =====================================================
-
-    async function analyzeRoad() {
-
-        const file =
-            document.getElementById(
-                "roadImage"
-            ).files[0];
-
-
-        if (!file) {
-
-            alert(
-                "Please select a road image first."
-            );
-
-            return;
-        }
-
-
-        // Make sure GPS exists
-        if (
-            window.currentLatitude === undefined
-        ) {
-
-            alert(
-                "Please allow GPS location first."
-            );
-
-            locateUser();
-
-            return;
-        }
-
-
-        const button =
-            document.getElementById(
-                "analyzeButton"
-            );
-
-
-        button.innerHTML =
-            "⏳ AI ANALYZING...";
-
-        button.disabled = true;
-
-
-        document.getElementById(
-            "aiStatus"
-        ).innerHTML =
-            "🟡 AI Processing...";
-
+    async function checkServer() {
 
         try {
 
-            const formData =
-                new FormData();
-
-
-            formData.append(
-                "image",
-                file
-            );
-
-
-            formData.append(
-                "latitude",
-                window.currentLatitude
-            );
-
-
-            formData.append(
-                "longitude",
-                window.currentLongitude
-            );
-
-
-            // SEND IMAGE TO PYTHON AI
             const response =
-                await fetch(
-                    "http://127.0.0.1:5000/detect",
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                );
-
+                await fetch("/api/status");
 
             if (!response.ok) {
-
-                throw new Error(
-                    "AI server error"
-                );
-
+                throw new Error("Server error");
             }
 
 
-            const result =
+            const data =
                 await response.json();
 
 
-            console.log(
-                "YOLO RESULT:",
-                result
-            );
+            document.getElementById(
+                "serverStatus"
+            ).innerText =
+                "AI ONLINE";
 
 
-            updateRoadAlert(result);
+            document.getElementById(
+                "aiServer"
+            ).innerText =
+                "ONLINE";
+
+
+            document.getElementById(
+                "modelStatus"
+            ).innerText =
+                data.model_loaded
+                    ? "LOADED"
+                    : "OFFLINE";
 
 
         }
@@ -595,240 +754,545 @@
 
 
             document.getElementById(
-                "aiStatus"
-            ).innerHTML =
-                "🔴 AI Server Offline";
+                "serverStatus"
+            ).innerText =
+                "AI OFFLINE";
 
 
             document.getElementById(
-                "alertText"
-            ).innerHTML =
-                "⚠️ AI CONNECTION FAILED";
+                "aiServer"
+            ).innerText =
+                "OFFLINE";
 
 
-            alert(
-                "Cannot connect to YOLO AI.\n\n" +
-                "Make sure the Python AI server is running."
-            );
+            document.getElementById(
+                "modelStatus"
+            ).innerText =
+                "OFFLINE";
 
         }
-
-
-        button.innerHTML =
-            "🤖 ANALYZE ROAD WITH AI";
-
-        button.disabled = false;
 
     }
 
 
-    // =====================================================
-    // UPDATE ALERT
-    // =====================================================
+    // ==========================================
+    // IMAGE UPLOAD
+    // ==========================================
 
-    function updateRoadAlert(result) {
+    document
+        .getElementById("imageInput")
+        .addEventListener(
+            "change",
+            function(event) {
 
-        const alertText =
-            document.getElementById(
-                "alertText"
+                const file =
+                    event.target.files[0];
+
+
+                if (!file) {
+                    return;
+                }
+
+
+                selectedFile = file;
+
+
+                const preview =
+                    document.getElementById(
+                        "preview"
+                    );
+
+
+                preview.src =
+                    URL.createObjectURL(file);
+
+
+                preview.style.display =
+                    "block";
+
+
+                document.getElementById(
+                    "analyzeBtn"
+                ).disabled =
+                    false;
+
+
+                hideResult();
+
+            }
+        );
+
+
+    // ==========================================
+    // ANALYZE ROAD
+    // ==========================================
+
+    async function analyzeRoad() {
+
+        if (!selectedFile) {
+
+            alert(
+                "Please select a road image first."
             );
 
-        const severity =
+            return;
+        }
+
+
+        const button =
             document.getElementById(
-                "severity"
+                "analyzeBtn"
             );
+
+
+        button.disabled = true;
+
+        button.innerText =
+            "⏳ ANALYZING...";
+
+
+        hideResult();
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "image",
+            selectedFile
+        );
+
+
+        formData.append(
+            "latitude",
+            currentLatitude
+        );
+
+
+        formData.append(
+            "longitude",
+            currentLongitude
+        );
+
+
+        try {
+
+            // IMPORTANT:
+            // Relative URL works with Flask
+            const response =
+                await fetch(
+                    "/detect",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    "AI analysis failed"
+                );
+
+            }
+
+
+            console.log(
+                "AI RESULT:",
+                data
+            );
+
+
+            showResult(data);
+
+
+            // Add detection to map
+            if (
+                data.detected &&
+                data.confidence >= 0.25
+            ) {
+
+                addDamageMarker(data);
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showError(
+                error.message
+            );
+
+        }
+
+
+        finally {
+
+            button.disabled = false;
+
+            button.innerText =
+                "🔍 ANALYZE ROAD";
+
+        }
+
+    }
+
+
+    // ==========================================
+    // SHOW RESULT
+    // ==========================================
+
+    function showResult(data) {
+
+        const result =
+            document.getElementById(
+                "result"
+            );
+
+        const title =
+            document.getElementById(
+                "resultTitle"
+            );
+
+        const details =
+            document.getElementById(
+                "resultDetails"
+            );
+
+
+        result.style.display =
+            "block";
+
 
         const confidence =
-            document.getElementById(
-                "confidence"
-            );
+            (
+                data.confidence * 100
+            ).toFixed(1);
 
 
-        document.getElementById(
-            "aiStatus"
-        ).innerHTML =
-            "🟢 AI Analysis Complete";
+        if (data.detected) {
+
+            result.className =
+                "result danger";
 
 
-        // REMOVE OLD POTHOLE MARKER
-        if (potholeMarker) {
-
-            map.removeLayer(
-                potholeMarker
-            );
-
-            potholeMarker = null;
-
-        }
+            title.innerText =
+                "⚠️ ROAD DAMAGE DETECTED";
 
 
-        // =============================================
-        // POTHOLE DETECTED
-        // =============================================
+            details.innerHTML =
 
-        if (
-            result.detected === true &&
-            result.confidence >= 0.50
-        ) {
-
-            const conf =
-                result.confidence * 100;
-
-
-            let severityLevel;
-
-
-            if (conf >= 90) {
-
-                severityLevel =
-                    "HIGH";
-
-            }
-
-            else if (conf >= 70) {
-
-                severityLevel =
-                    "MEDIUM";
-
-            }
-
-            else {
-
-                severityLevel =
-                    "LOW";
-
-            }
-
-
-            alertText.innerHTML =
-                "🔴 POTHOLE DETECTED";
-
-            alertText.className =
-                "danger";
-
-
-            severity.innerHTML =
-                "Severity: <b>" +
-                severityLevel +
-                "</b>";
-
-
-            confidence.innerHTML =
-                "Confidence: <b>" +
-                conf.toFixed(1) +
-                "%</b>";
-
-
-            // =========================================
-            // AI GPS LOCATION
-            // =========================================
-
-            const latitude =
-                result.latitude ??
-                window.currentLatitude;
-
-            const longitude =
-                result.longitude ??
-                window.currentLongitude;
-
-
-            // =========================================
-            // MAP MARKER
-            // =========================================
-
-            const selectedIcon =
-                severityLevel === "HIGH"
-                    ? potholeIcon
-                    : warningIcon;
-
-
-            potholeMarker =
-                L.marker(
-                    [latitude, longitude],
-                    {
-                        icon: selectedIcon
-                    }
-                )
-                .addTo(map);
-
-
-            potholeMarker.bindPopup(
-
-                "<b>🚨 ROADMIND ROAD ALERT</b>" +
-                "<br><br>" +
-
-                "🔴 Pothole detected" +
-                "<br>" +
-
-                "⚠️ Severity: " +
-                severityLevel +
+                "<b>Type:</b> " +
+                escapeHTML(
+                    data.class || "Unknown"
+                ) +
 
                 "<br>" +
 
-                "🤖 Confidence: " +
-                conf.toFixed(1) +
+                "<b>Confidence:</b> " +
+                confidence +
                 "%" +
 
-                "<br><br>" +
+                "<br>" +
 
-                "📍 Latitude: " +
-                latitude.toFixed(6) +
+                "<b>Latitude:</b> " +
+                Number(
+                    data.latitude
+                ).toFixed(6) +
 
                 "<br>" +
 
-                "📍 Longitude: " +
-                longitude.toFixed(6) +
+                "<b>Longitude:</b> " +
+                Number(
+                    data.longitude
+                ).toFixed(6);
 
-                "<br><br>" +
 
-                "🛣️ Road condition requires attention"
-
+            showMapAlert(
+                "⚠️ ROAD DAMAGE DETECTED",
+                (data.class || "Road damage") +
+                " detected with " +
+                confidence +
+                "% confidence"
             );
-
-
-            potholeMarker.openPopup();
-
-
-            // MOVE MAP TO ALERT
-            map.setView(
-                [latitude, longitude],
-                19
-            );
-
 
         }
-
-        // =============================================
-        // NO DAMAGE
-        // =============================================
 
         else {
 
-            alertText.innerHTML =
-                "🟢 NO DAMAGE DETECTED";
-
-            alertText.className =
-                "success";
+            result.className =
+                "result safe";
 
 
-            severity.innerHTML =
-                "Severity: NORMAL";
+            title.innerText =
+                "✅ ROAD CONDITION OK";
 
 
-            confidence.innerHTML =
-                "Confidence: —";
-
+            details.innerHTML =
+                "No road damage was detected by the AI model.";
 
         }
 
     }
 
 
-    // =====================================================
-    // START GPS
-    // =====================================================
+    // ==========================================
+    // ERROR RESULT
+    // ==========================================
+
+    function showError(message) {
+
+        const result =
+            document.getElementById(
+                "result"
+            );
+
+        const title =
+            document.getElementById(
+                "resultTitle"
+            );
+
+        const details =
+            document.getElementById(
+                "resultDetails"
+            );
+
+
+        result.style.display =
+            "block";
+
+
+        result.className =
+            "result warning";
+
+
+        title.innerText =
+            "❌ ANALYSIS ERROR";
+
+
+        details.innerText =
+            message;
+
+    }
+
+
+    // ==========================================
+    // HIDE RESULT
+    // ==========================================
+
+    function hideResult() {
+
+        document.getElementById(
+            "result"
+        ).style.display =
+            "none";
+
+    }
+
+
+    // ==========================================
+    // ADD DAMAGE MARKER
+    // ==========================================
+
+    function addDamageMarker(data) {
+
+        const confidence =
+            (
+                data.confidence * 100
+            ).toFixed(1);
+
+
+        let iconColor =
+            "red";
+
+
+        if (data.confidence < 0.50) {
+            iconColor = "orange";
+        }
+
+
+        const damageIcon =
+            L.divIcon({
+
+                className:
+                    "damage-marker",
+
+                html:
+                    `<div style="
+                        width:24px;
+                        height:24px;
+                        border-radius:50%;
+                        background:${iconColor};
+                        border:3px solid white;
+                        box-shadow:0 0 12px ${iconColor};
+                    "></div>`,
+
+                iconSize: [
+                    24,
+                    24
+                ],
+
+                iconAnchor: [
+                    12,
+                    12
+                ]
+
+            });
+
+
+        const marker =
+            L.marker(
+                [
+                    data.latitude,
+                    data.longitude
+                ],
+                {
+                    icon:
+                        damageIcon
+                }
+            )
+            .addTo(map);
+
+
+        marker.bindPopup(
+
+            "<b>⚠️ ROAD DAMAGE</b>" +
+
+            "<br><br>" +
+
+            "<b>Type:</b> " +
+            escapeHTML(
+                data.class || "Unknown"
+            ) +
+
+            "<br>" +
+
+            "<b>Confidence:</b> " +
+            confidence +
+            "%" +
+
+            "<br>" +
+
+            "<b>Latitude:</b> " +
+            Number(
+                data.latitude
+            ).toFixed(6) +
+
+            "<br>" +
+
+            "<b>Longitude:</b> " +
+            Number(
+                data.longitude
+            ).toFixed(6)
+
+        ).openPopup();
+
+
+        map.setView(
+            [
+                data.latitude,
+                data.longitude
+            ],
+            18
+        );
+
+    }
+
+
+    // ==========================================
+    // MAP ALERT
+    // ==========================================
+
+    function showMapAlert(
+        title,
+        text
+    ) {
+
+        const alertBox =
+            document.getElementById(
+                "mapAlert"
+            );
+
+        document.getElementById(
+            "mapAlertTitle"
+        ).innerText =
+            title;
+
+        document.getElementById(
+            "mapAlertText"
+        ).innerText =
+            text;
+
+
+        alertBox.style.display =
+            "block";
+
+
+        setTimeout(
+            function() {
+
+                alertBox.style.display =
+                    "none";
+
+            },
+            6000
+        );
+
+    }
+
+
+    // ==========================================
+    // BASIC HTML ESCAPE
+    // ==========================================
+
+    function escapeHTML(value) {
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    // ==========================================
+    // START ROADMIND
+    // ==========================================
+
+    initializeMap();
+
+    checkServer();
 
     locateUser();
+
 
 </script>
 
