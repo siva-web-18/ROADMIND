@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ROADMIND - Smart Road Monitoring</title>
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+        }
+
+        header {
+            padding: 18px;
+            background: #111827;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 6px 0 0;
+            color: #94a3b8;
+        }
+
+        .dashboard {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .panel {
+            width: 320px;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .status {
+            background: #334155;
+            padding: 14px;
+            margin-top: 12px;
+            border-radius: 8px;
+        }
+
+        .danger {
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .location {
+            color: #38bdf8;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #analyzeButton {
+            background: #2563eb;
+            color: white;
+        }
+
+        #locateButton {
+            background: #475569;
+            color: white;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            background: #0f172a;
+            color: white;
+            border-radius: 6px;
+        }
+
+        #map {
+            flex: 1;
+            height: 650px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .alert-marker {
+            background: red;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            box-shadow: 0 0 15px red;
+        }
+
+        .warning-marker {
+            background: orange;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            box-shadow: 0 0 15px orange;
+        }
+
+        .clear-marker {
+            background: #22c55e;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+        }
+
+        #preview {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        @media (max-width: 800px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .panel {
+                width: 100%;
+            }
+
+            #map {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🚧 ROADMIND</h1>
+    <p>AI-Powered Smart Road Monitoring System</p>
+</header>
+
+<div class="dashboard">
+
+    <div class="panel">
+
+        <h2>Road Analysis</h2>
+
+        <!-- AI STATUS -->
+        <div class="status">
+            <strong>🤖 AI Status</strong>
+
+            <p>
+                Model:
+                <b>YOLO Pothole Detection</b>
+            </p>
+
+            <p id="aiStatus" class="success">
+                🟢 Online
+            </p>
+        </div>
+
+        <!-- ROAD ALERT -->
+        <div class="status">
+            <strong>🚨 Road Alert</strong>
+
+            <p id="alertText" class="success">
+                🟢 NO DAMAGE DETECTED
+            </p>
+
+            <p id="severity">
+                Severity: —
+            </p>
+
+            <p id="confidence">
+                Confidence: —
+            </p>
+        </div>
+
+        <!-- GPS -->
+        <div class="status">
+
+            <strong>📍 GPS Location</strong>
+
+            <p id="locationStatus" class="location">
+                Detecting location...
+            </p>
+
+        </div>
+
+        <!-- MAP -->
+        <div class="status">
+
+            <strong>🛰️ Map Mode</strong>
+
+            <p>Satellite View</p>
+
+        </div>
+
+        <!-- IMAGE ANALYSIS -->
+        <div class="status">
+
+            <strong>📸 Road Image</strong>
+
+            <input
+                type="file"
+                id="roadImage"
+                accept="image/*"
+                onchange="previewImage()"
+            >
+
+            <img id="preview">
+
+            <button
+                id="analyzeButton"
+                onclick="analyzeRoad()"
+            >
+                🤖 ANALYZE ROAD WITH AI
+            </button>
+
+        </div>
+
+        <button
+            id="locateButton"
+            onclick="locateUser()"
+        >
+            📍 Locate Me
+        </button>
+
+    </div>
+
+    <div id="map"></div>
+
+</div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+    // =====================================================
+    // ROADMIND MAP
+    // =====================================================
+
+    const defaultLocation = [11.0168, 76.9558];
+
+    const map = L.map("map").setView(
+        defaultLocation,
+        15
+    );
+
+
+    // SATELLITE MAP
+    const satellite = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/" +
+        "World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+            attribution: "Tiles © Esri"
+        }
+    );
+
+    satellite.addTo(map);
+
+
+    // LABELS
+    const labels = L.tileLayer(
+        "https://services.arcgisonline.com/ArcGIS/rest/services/" +
+        "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        {
+            attribution: "Esri"
+        }
+    );
+
+    labels.addTo(map);
+
+
+    let userMarker = null;
+    let potholeMarker = null;
+
+
+    // =====================================================
+    // MARKER ICONS
+    // =====================================================
+
+    const potholeIcon = L.divIcon({
+
+        className: "",
+
+        html:
+            '<div class="alert-marker"></div>',
+
+        iconSize: [25, 25],
+
+        iconAnchor: [12, 12]
+
+    });
+
+
+    const warningIcon = L.divIcon({
+
+        className: "",
+
+        html:
+            '<div class="warning-marker"></div>',
+
+        iconSize: [25, 25],
+
+        iconAnchor: [12, 12]
+
+    });
+
+
+    // =====================================================
+    // GPS
+    // =====================================================
+
+    function locateUser() {
+
+        if (!navigator.geolocation) {
+
+            document.getElementById(
+                "locationStatus"
+            ).innerHTML =
+                "❌ GPS not supported";
+
+            return;
+        }
+
+
+        document.getElementById(
+            "locationStatus"
+        ).innerHTML =
+            "⏳ Finding your location...";
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position) {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+
+                // SAVE GPS
+                window.currentLatitude =
+                    latitude;
+
+                window.currentLongitude =
+                    longitude;
+
+
+                // MOVE MAP
+                map.setView(
+                    [latitude, longitude],
+                    18
+                );
+
+
+                // REMOVE OLD USER MARKER
+                if (userMarker) {
+
+                    map.removeLayer(
+                        userMarker
+                    );
+
+                }
+
+
+                // USER MARKER
+                userMarker = L.marker(
+                    [latitude, longitude]
+                )
+                .addTo(map)
+                .bindPopup(
+                    "<b>📍 YOUR LOCATION</b><br>" +
+                    "ROADMIND monitoring area"
+                );
+
+
+                document.getElementById(
+                    "locationStatus"
+                ).innerHTML =
+                    "🟢 Location detected<br>" +
+                    "Lat: " +
+                    latitude.toFixed(6) +
+                    "<br>" +
+                    "Lon: " +
+                    longitude.toFixed(6);
+
+            },
+
+
+            function(error) {
+
+                document.getElementById(
+                    "locationStatus"
+                ).innerHTML =
+                    "⚠️ Location permission denied";
+
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // IMAGE PREVIEW
+    // =====================================================
+
+    function previewImage() {
+
+        const file =
+            document.getElementById(
+                "roadImage"
+            ).files[0];
+
+
+        if (!file) return;
+
+
+        const preview =
+            document.getElementById(
+                "preview"
+            );
+
+
+        preview.src =
+            URL.createObjectURL(file);
+
+        preview.style.display =
+            "block";
+
+    }
+
+
+    // =====================================================
+    // AI ROAD ANALYSIS
+    // =====================================================
+
+    async function analyzeRoad() {
+
+        const file =
+            document.getElementById(
+                "roadImage"
+            ).files[0];
+
+
+        if (!file) {
+
+            alert(
+                "Please select a road image first."
+            );
+
+            return;
+        }
+
+
+        // Make sure GPS exists
+        if (
+            window.currentLatitude === undefined
+        ) {
+
+            alert(
+                "Please allow GPS location first."
+            );
+
+            locateUser();
+
+            return;
+        }
+
+
+        const button =
+            document.getElementById(
+                "analyzeButton"
+            );
+
+
+        button.innerHTML =
+            "⏳ AI ANALYZING...";
+
+        button.disabled = true;
+
+
+        document.getElementById(
+            "aiStatus"
+        ).innerHTML =
+            "🟡 AI Processing...";
+
+
+        try {
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "image",
+                file
+            );
+
+
+            formData.append(
+                "latitude",
+                window.currentLatitude
+            );
+
+
+            formData.append(
+                "longitude",
+                window.currentLongitude
+            );
+
+
+            // SEND IMAGE TO PYTHON AI
+            const response =
+                await fetch(
+                    "http://127.0.0.1:5000/detect",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "AI server error"
+                );
+
+            }
+
+
+            const result =
+                await response.json();
+
+
+            console.log(
+                "YOLO RESULT:",
+                result
+            );
+
+
+            updateRoadAlert(result);
+
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            document.getElementById(
+                "aiStatus"
+            ).innerHTML =
+                "🔴 AI Server Offline";
+
+
+            document.getElementById(
+                "alertText"
+            ).innerHTML =
+                "⚠️ AI CONNECTION FAILED";
+
+
+            alert(
+                "Cannot connect to YOLO AI.\n\n" +
+                "Make sure the Python AI server is running."
+            );
+
+        }
+
+
+        button.innerHTML =
+            "🤖 ANALYZE ROAD WITH AI";
+
+        button.disabled = false;
+
+    }
+
+
+    // =====================================================
+    // UPDATE ALERT
+    // =====================================================
+
+    function updateRoadAlert(result) {
+
+        const alertText =
+            document.getElementById(
+                "alertText"
+            );
+
+        const severity =
+            document.getElementById(
+                "severity"
+            );
+
+        const confidence =
+            document.getElementById(
+                "confidence"
+            );
+
+
+        document.getElementById(
+            "aiStatus"
+        ).innerHTML =
+            "🟢 AI Analysis Complete";
+
+
+        // REMOVE OLD POTHOLE MARKER
+        if (potholeMarker) {
+
+            map.removeLayer(
+                potholeMarker
+            );
+
+            potholeMarker = null;
+
+        }
+
+
+        // =============================================
+        // POTHOLE DETECTED
+        // =============================================
+
+        if (
+            result.detected === true &&
+            result.confidence >= 0.50
+        ) {
+
+            const conf =
+                result.confidence * 100;
+
+
+            let severityLevel;
+
+
+            if (conf >= 90) {
+
+                severityLevel =
+                    "HIGH";
+
+            }
+
+            else if (conf >= 70) {
+
+                severityLevel =
+                    "MEDIUM";
+
+            }
+
+            else {
+
+                severityLevel =
+                    "LOW";
+
+            }
+
+
+            alertText.innerHTML =
+                "🔴 POTHOLE DETECTED";
+
+            alertText.className =
+                "danger";
+
+
+            severity.innerHTML =
+                "Severity: <b>" +
+                severityLevel +
+                "</b>";
+
+
+            confidence.innerHTML =
+                "Confidence: <b>" +
+                conf.toFixed(1) +
+                "%</b>";
+
+
+            // =========================================
+            // AI GPS LOCATION
+            // =========================================
+
+            const latitude =
+                result.latitude ??
+                window.currentLatitude;
+
+            const longitude =
+                result.longitude ??
+                window.currentLongitude;
+
+
+            // =========================================
+            // MAP MARKER
+            // =========================================
+
+            const selectedIcon =
+                severityLevel === "HIGH"
+                    ? potholeIcon
+                    : warningIcon;
+
+
+            potholeMarker =
+                L.marker(
+                    [latitude, longitude],
+                    {
+                        icon: selectedIcon
+                    }
+                )
+                .addTo(map);
+
+
+            potholeMarker.bindPopup(
+
+                "<b>🚨 ROADMIND ROAD ALERT</b>" +
+                "<br><br>" +
+
+                "🔴 Pothole detected" +
+                "<br>" +
+
+                "⚠️ Severity: " +
+                severityLevel +
+
+                "<br>" +
+
+                "🤖 Confidence: " +
+                conf.toFixed(1) +
+                "%" +
+
+                "<br><br>" +
+
+                "📍 Latitude: " +
+                latitude.toFixed(6) +
+
+                "<br>" +
+
+                "📍 Longitude: " +
+                longitude.toFixed(6) +
+
+                "<br><br>" +
+
+                "🛣️ Road condition requires attention"
+
+            );
+
+
+            potholeMarker.openPopup();
+
+
+            // MOVE MAP TO ALERT
+            map.setView(
+                [latitude, longitude],
+                19
+            );
+
+
+        }
+
+        // =============================================
+        // NO DAMAGE
+        // =============================================
+
+        else {
+
+            alertText.innerHTML =
+                "🟢 NO DAMAGE DETECTED";
+
+            alertText.className =
+                "success";
+
+
+            severity.innerHTML =
+                "Severity: NORMAL";
+
+
+            confidence.innerHTML =
+                "Confidence: —";
+
+
+        }
+
+    }
+
+
+    // =====================================================
+    // START GPS
+    // =====================================================
+
+    locateUser();
+
+</script>
+
+</body>
+</html>
