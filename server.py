@@ -43,16 +43,23 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 MODEL_PATH = None
 
-# Your known YOLO model
-known_model = (
-    r"C:\Users\acer\.cache\huggingface\hub"
-    r"\models--vinothvikas1987--pothole-detection-yolov8"
-    r"\snapshots\b001687443175e43442f63bef4691c3546629def"
-    r"\best.pt"
-)
+# Prefer a model bundled with the repository, then check the local cache.
+model_candidates = [
+    os.path.join(BASE_DIR, "data", "best.pt"),
+    os.path.join(BASE_DIR, "models", "best.pt"),
+    os.path.join(BASE_DIR, "yolo11n.pt"),
+    (
+        r"C:\Users\acer\.cache\huggingface\hub"
+        r"\models--vinothvikas1987--pothole-detection-yolov8"
+        r"\snapshots\b001687443175e43442f63bef4691c3546629def"
+        r"\best.pt"
+    ),
+]
 
-if os.path.exists(known_model):
-    MODEL_PATH = known_model
+MODEL_PATH = next(
+    (path for path in model_candidates if os.path.exists(path)),
+    None,
+)
 
 
 # Search automatically if known path is not available

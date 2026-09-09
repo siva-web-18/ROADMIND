@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+
+data/road_images/road_*.jpg
+data/road_images/road_*.jpeg
+data/road_images/road_*.png
+data/road_images/road_*.webp
+data/road_images/road_*.bmp
+data/road_images/uploaded_road.*
+data/road_images/yolo_result_*.jpg
+data/road_images/yolo_result_*.jpeg
+data/road_images/yolo_result_*.png
